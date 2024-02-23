@@ -4,7 +4,9 @@ go 1.22.0
 
 require (
 	github.com/gorilla/mux v1.8.1
+	github.com/rabbitmq/amqp091-go v1.9.0
 	github.com/spf13/viper v1.18.2
+	github.com/streadway/amqp v1.1.0
 )
 
 require (
