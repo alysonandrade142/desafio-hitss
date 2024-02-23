@@ -36,13 +36,13 @@ func CloseChannel(channel *amqp.Channel) {
 	}
 }
 
-func Consume(queue string, uuid string) interface{} {
+func Consume(queue string, uuid string) (interface{}, error) {
 
-	println("Starting server...")
 	var out chan amqp.Delivery
 	conn, err := NewRabbitMQ()
 	if err != nil {
 		log.Printf("Error on create connection: %v", err)
+		return nil, err
 	}
 
 	defer CloseConnection(conn)
@@ -50,6 +50,7 @@ func Consume(queue string, uuid string) interface{} {
 	channel, err := NewChannel(conn)
 	if err != nil {
 		log.Printf("Error on create channel: %v", err)
+		return nil, err
 	}
 	defer CloseChannel(channel)
 
@@ -65,7 +66,7 @@ func Consume(queue string, uuid string) interface{} {
 
 	if err != nil {
 		log.Printf("Error on consume: %v", err)
-		return err
+		return nil, err
 	}
 
 	for msg := range msgs {
@@ -74,20 +75,20 @@ func Consume(queue string, uuid string) interface{} {
 		err := json.Unmarshal(msg.Body, &body)
 		if err != nil {
 			log.Printf("Cannot unmarshaly: %v", err)
+			return nil, err
 		}
 
 		if body.MessageId == uuid {
-			println("FOUND")
 			channel.Ack(msg.DeliveryTag, false)
-			return body.Content
+			return body.Content, nil
 		}
 		out <- msg
 	}
 
-	return nil
+	return nil, nil
 }
 
-func Publish(ctx context.Context, pBody interface{}, queue string) {
+func Publish(ctx context.Context, pBody interface{}, queue string, uuid string) {
 
 	body, err := json.Marshal(pBody)
 	if err != nil {

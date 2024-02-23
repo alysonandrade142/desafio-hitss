@@ -19,9 +19,14 @@ func List(w http.ResponseWriter, r *http.Request) {
 		MessageId: uuid,
 		Method:    "LIST",
 	}
-	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING)
+	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING, uuid)
 
-	response := mq.Consume(mq.QUEUE_RESPONSE, uuid)
+	response, err := mq.Consume(mq.QUEUE_RESPONSE, uuid)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Printf("Error on Consume: %v", err)
+		return
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
@@ -43,9 +48,14 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		Method:    "SEARCH",
 	}
 
-	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING)
+	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING, uuid)
 
-	response := mq.Consume(mq.QUEUE_RESPONSE, uuid)
+	response, err := mq.Consume(mq.QUEUE_RESPONSE, uuid)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Printf("Error on Consume: %v", err)
+		return
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

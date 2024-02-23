@@ -62,7 +62,6 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
 
 			var queueBody *model.QueueBody
 
@@ -71,9 +70,6 @@ func main() {
 				log.Printf("Cannot unmarshal queue body: %v", err)
 				continue
 			}
-
-			log.Printf("Method: %s", queueBody.Method)
-			log.Printf("Method: %s", queueBody.User.Nome)
 
 			var content interface{}
 
@@ -111,10 +107,7 @@ func main() {
 				Content:   content,
 			}
 
-			fmt.Println("Message ID UUID: ", responseBody.MessageId)
-			mq.Publish(ctx, responseBody, mq.QUEUE_RESPONSE)
-
-			fmt.Printf("Response: %v\n", content)
+			mq.Publish(ctx, responseBody, mq.QUEUE_RESPONSE, queueBody.MessageId)
 		}
 	}()
 
