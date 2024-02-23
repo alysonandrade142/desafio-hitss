@@ -6,19 +6,25 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/alysonandrade142/desafio-hitss/internal/repository"
+	"github.com/alysonandrade142/desafio-hitss/internal/model"
+	"github.com/alysonandrade142/desafio-hitss/pkg/mq"
 	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 )
 
 func List(w http.ResponseWriter, r *http.Request) {
-	users, err := repository.GetAll()
-	if err != nil {
-		log.Printf("Error on get all users: %v", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+
+	uuid := uuid.NewV4()
+	body := model.QueueBody{
+		MessageId: uuid,
+		Method:    "LIST",
 	}
+	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING)
+
+	response := mq.Consume(mq.QUEUE_RESPONSE, uuid)
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(response)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -29,13 +35,18 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := repository.Get(int64(id))
-	if err != nil {
-		log.Printf("Error on get user: %v", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
+	uuid := uuid.NewV4()
+	body := model.QueueBody{
+		MessageId: uuid,
+		ID:        int64(id),
+		Method:    "SEARCH",
 	}
 
+	println("PUBLISHING")
+	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING)
+
+	response := mq.Consume(mq.QUEUE_RESPONSE, uuid)
+
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(response)
 }

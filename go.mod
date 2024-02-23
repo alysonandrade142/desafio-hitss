@@ -9,6 +9,8 @@ require (
 	github.com/streadway/amqp v1.1.0
 )
 
+require github.com/satori/go.uuid v1.2.0 // indirect
+
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

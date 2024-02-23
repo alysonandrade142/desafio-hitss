@@ -1,8 +1,6 @@
 package configs
 
 import (
-	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -62,8 +60,6 @@ func Load() error {
 			Database: viper.GetString("database.name"),
 		},
 	}
-
-	fmt.Printf("Loaded config: %+v\n", conf.API)
 
 	return nil
 }
