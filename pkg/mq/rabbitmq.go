@@ -3,12 +3,10 @@ package mq
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/alysonandrade142/desafio-hitss/internal/model"
 	amqp "github.com/rabbitmq/amqp091-go"
-	uuid "github.com/satori/go.uuid"
 )
 
 var (
@@ -38,7 +36,7 @@ func CloseChannel(channel *amqp.Channel) {
 	}
 }
 
-func Consume(queue string, uuid uuid.UUID) interface{} {
+func Consume(queue string, uuid string) interface{} {
 
 	println("Starting server...")
 	var out chan amqp.Delivery
@@ -70,16 +68,18 @@ func Consume(queue string, uuid uuid.UUID) interface{} {
 		return err
 	}
 
-	fmt.Println("INICIO DO LOOP")
 	for msg := range msgs {
 
 		var body model.QueueBody
-		json.Unmarshal(msg.Body, &body)
+		err := json.Unmarshal(msg.Body, &body)
+		if err != nil {
+			log.Printf("Cannot unmarshaly: %v", err)
+		}
 
 		if body.MessageId == uuid {
 			println("FOUND")
 			channel.Ack(msg.DeliveryTag, false)
-			return body
+			return body.Content
 		}
 		out <- msg
 	}
@@ -132,6 +132,4 @@ func Publish(ctx context.Context, pBody interface{}, queue string) {
 	if err != nil {
 		log.Printf("Error on publish: %v", err)
 	}
-
-	fmt.Println(body)
 }

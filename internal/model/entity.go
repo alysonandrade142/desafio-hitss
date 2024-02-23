@@ -1,7 +1,5 @@
 package model
 
-import uuid "github.com/satori/go.uuid"
-
 type User struct {
 	ID        int64  `json:"id"`
 	Nome      string `json:"nome"`
@@ -13,7 +11,7 @@ type User struct {
 }
 
 type QueueBody struct {
-	MessageId uuid.UUID
+	MessageId string
 	ID        int64       `json:"id,omitempty"`
 	Method    string      `json:"method"`
 	Content   interface{} `json:"content,omitempty"`

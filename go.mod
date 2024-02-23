@@ -9,7 +9,11 @@ require (
 	github.com/streadway/amqp v1.1.0
 )
 
-require github.com/satori/go.uuid v1.2.0 // indirect
+require (
+	github.com/google/uuid v1.4.0 // indirect
+	github.com/lithammer/shortuuid v3.0.0+incompatible // indirect
+	github.com/satori/go.uuid v1.2.0 // indirect
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

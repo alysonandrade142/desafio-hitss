@@ -9,12 +9,12 @@ import (
 	"github.com/alysonandrade142/desafio-hitss/internal/model"
 	"github.com/alysonandrade142/desafio-hitss/pkg/mq"
 	"github.com/gorilla/mux"
-	uuid "github.com/satori/go.uuid"
+	"github.com/lithammer/shortuuid"
 )
 
 func List(w http.ResponseWriter, r *http.Request) {
 
-	uuid := uuid.NewV4()
+	uuid := shortuuid.New()
 	body := model.QueueBody{
 		MessageId: uuid,
 		Method:    "LIST",
@@ -35,14 +35,14 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uuid := uuid.NewV4()
+	uuid := shortuuid.New()
+
 	body := model.QueueBody{
 		MessageId: uuid,
 		ID:        int64(id),
 		Method:    "SEARCH",
 	}
 
-	println("PUBLISHING")
 	mq.Publish(r.Context(), body, mq.QUEUE_PROCESSING)
 
 	response := mq.Consume(mq.QUEUE_RESPONSE, uuid)
