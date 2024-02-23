@@ -27,7 +27,7 @@ type DBConfig struct {
 
 func init() {
 	defaultValues := map[string]interface{}{
-		"api.port":      "9000",
+		"api.port":      "9001",
 		"database.host": "localhost",
 		"database.port": "5432",
 		"database.user": "postgres",
@@ -42,7 +42,7 @@ func init() {
 func Load() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
-	viper.AddConfigPath("./pkg/configs/")
+	viper.AddConfigPath("../desafio-hitss/../pkg/configs/")
 
 	err := viper.ReadInConfig()
 	if err != nil {

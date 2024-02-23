@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	QUEUE    = "USER"
-	CONSUMER = "DESAFIO_HITS"
+	QUEUE_PROCESSING = "queue-processing"
+	QUEUE_RESPONSE   = "queue-response"
 )
 
 func NewRabbitMQ() (*amqp.Connection, error) {
@@ -33,8 +33,8 @@ func CloseChannel(channel *amqp.Channel) {
 
 func Consume(channel *amqp.Channel, out chan amqp.Delivery) error {
 	msgs, err := channel.Consume(
-		QUEUE,
-		CONSUMER,
+		QUEUE_PROCESSING,
+		"",
 		false,
 		false,
 		false,

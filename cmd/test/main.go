@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/alysonandrade142/desafio-hitss/pkg/mq"
 	"github.com/streadway/amqp"
 )
 
@@ -13,7 +14,7 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func init() {
+func main() {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -23,12 +24,12 @@ func init() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // Nome da fila
-		false,   // Durable
-		false,   // Delete when unused
-		false,   // Exclusive
-		false,   // No-wait
-		nil,     // Arguments
+		mq.QUEUE_PROCESSING, // Nome da fila
+		false,               // Durable
+		false,               // Delete when unused
+		false,               // Exclusive
+		false,               // No-wait
+		nil,                 // Arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
