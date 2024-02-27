@@ -20,19 +20,25 @@ git clone https://github.com/seu-usuario/nome-do-repositorio.git
 Navegue até o diretório clonado:
 ```
 
-```bash
-Copy code
+```
 cd nome-do-repositorio
 Execute o seguinte comando para iniciar o contêiner PostgreSQL e o worker em segundo plano:
 ```
 ```
-bash
-Copy code
 docker-compose up -d
 ```
+Para inicializar o banco
+```
+docker exec -it  postgres psql -U dbuser api_users
+```
+Para criar a tabela de dados
+```
+create table users (id serial primary key, nome varchar, sobrenome varchar, contato varchar, endereço text, data_nasc varchar, cpf varchar);
+```
+
 Execute a API Golang. O código-fonte da API pode ser encontrado nos diretórios apropriados.
 
-Para iniciar a API, o consumo dos serviços podem ser efetuados via postman.
+Para iniciar a API, o consumo dos serviços podem ser efetuados via postman..
 ```
 cmd -> api -> main.go
 ```
